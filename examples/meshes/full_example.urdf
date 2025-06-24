@@ -11,8 +11,8 @@
         </collision>
         <collision name="big_collision_box">
             <origin rpy="0 0 0" xyz="-0.1 0 0"/>
-            <!--geometry><box size="2.2545 2.2545 2.2545"/></geometry-->
-            <geometry><mesh filename="package://robot_body_filter/examples/box.dae" scale="2.2545 1.12545 0.7515"/></geometry>
+            <geometry><box size="2.2545 1.12545 0.7515"/></geometry>
+            <!--geometry><mesh filename="package://robot_body_filter/examples/box.dae" scale="2.2545 1.12545 0.7515"/></geometry-->
         </collision>
         <inertial>
             <origin rpy="0 0 0" xyz="-0.034 0 0.142"/>
@@ -53,7 +53,7 @@
     </link>
     <joint name="laser_base_j" type="fixed">
         <parent link="base_link"/>
-        <child link="laser_base"/>
+        <child link="laser"/>
         <origin rpy="0 0 0" xyz="-1.5 0 0"/>
     </joint>
     <link name="laser">
@@ -72,8 +72,8 @@
         </inertial>
     </link>
     <joint name="laser_j" type="revolute">
-        <parent link="laser_base"/>
-        <child link="laser"/>
+        <parent link="laser"/>
+        <child link="laser_base"/>
         <axis xyz="1 0 0"/>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <limit effort="0" lower="-2.3561945" upper="2.3561945" velocity="4"/>

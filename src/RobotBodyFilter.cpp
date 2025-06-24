@@ -583,13 +583,23 @@ bool RobotBodyFilter<T>::configure() {
   return true;
 }
 
+void RobotBodyFilterLaserScan::DeclareParameters(){
+  if (this->nodeHandle->has_parameter("sensor/point_by_point") == false){
+    this->nodeHandle->declare_parameter("sensor/point_by_point", false);
+    RobotBodyFilter::DeclareParameters(); 
+  }
+};
+
 bool RobotBodyFilterLaserScan::configure() {
 
   RCLCPP_INFO(nodeHandle->get_logger(),"Declaring Parameters");
-  //TODO: Implement
-  // DeclareParameters();
+  
+  DeclareParameters();
+  
+  RCLCPP_INFO(nodeHandle->get_logger(),"Configuring RobotBodyFilterLaserScan");
+
   bool success = RobotBodyFilter::configure();
-  return false;
+  return success;
 }
 
 bool RobotBodyFilterPointCloud2::configure() {

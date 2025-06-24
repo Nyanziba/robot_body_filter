@@ -1,0 +1,47 @@
+# Example parameter file for LiDAR processor plugins
+
+lidar_processor_example:
+  ros__parameters:
+    # List of active processors (order matters for processing pipeline)
+    active_processors:
+      - "robot_body_filter/DistanceFilterProcessor"
+      - "robot_body_filter/VoxelGridProcessor"
+      - "robot_body_filter/RobotBodyFilterProcessor"
+
+    # Distance filter parameters
+    distance_filter:
+      min_distance: 0.1    # Minimum distance in meters
+      max_distance: 30.0   # Maximum distance in meters
+      keep_organized: false # Whether to maintain organized structure
+
+    # Voxel grid parameters
+    voxel_grid:
+      leaf_size_x: 0.05    # Voxel size in X direction (meters)
+      leaf_size_y: 0.05    # Voxel size in Y direction (meters)
+      leaf_size_z: 0.05    # Voxel size in Z direction (meters)
+
+    # Robot body filter parameters (these are standard robot_body_filter params)
+    robot_description_param: "robot_description"
+    fixed_frame: "base_link"
+    sensor_frame: "lidar_link"
+    filtering_frame: "base_link"
+    min_distance: 0.01
+    max_distance: 50.0
+    
+    # Inflation parameters for robot body filter
+    default:
+      contains:
+        scale: 1.0
+        padding: 0.01
+      shadow:
+        scale: 1.0
+        padding: 0.01
+
+    # TF parameters
+    reachable_transform_timeout: 1.0
+    unreachable_transform_timeout: 0.1
+    require_all_frames_reachable: false
+    
+    # Output options
+    keep_clouds_organized: false
+    point_by_point_scan: false

@@ -1,0 +1,31 @@
+accurate_collision_filter:
+  ros__parameters:
+    # Input/Output topics
+    input_topic: "/livox/lidar"
+    output_topic: "/filtered_pointcloud"
+    use_sim_time: true
+    
+    # Robot model settings
+    robot_description_param: "robot_description"
+    base_frame: "base_link"
+    sensor_frame: "livox_frame"
+    
+    # Sensor frame options (examples):
+    # sensor_frame: "livox_frame"      # For Livox LiDAR
+    # sensor_frame: "laser"            # For 2D laser scanner
+    # sensor_frame: "velodyne"         # For Velodyne LiDAR
+    # sensor_frame: "ouster"           # For Ouster LiDAR
+    
+    # Collision detection parameters
+    collision_padding: 0.5  # Minimal padding (2cm) for safety margin
+    max_collision_distance: 10.0  # Only check points within 2m of robot base
+    check_self_collision_only: true  # Only remove points inside robot, not shadows
+    
+    # Advanced settings
+    transform_timeout: 0.1  # Timeout for TF lookups in seconds
+    update_rate: 10.0  # Filter update rate in Hz
+    
+    # Debug settings
+    publish_debug_markers: true  # Visualize collision bodies in RViz
+    log_statistics: true  # Log filtering statistics
+    log_frequency: 2.0  # Log every N seconds

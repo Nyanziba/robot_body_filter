@@ -1,0 +1,96 @@
+/**:
+  ros__parameters:
+  # Distance filter parameters
+    distance_filter:
+      min_distance: 0.05
+      max_distance: 100.0
+      keep_organized: false
+    
+    # Voxel grid parameters  
+    voxel_grid:
+      leaf_size_x: 0.25
+      leaf_size_y: 0.25
+      leaf_size_z: 0.25
+    # === COORDINATE FRAMES ===
+    fixedFrame: "base_link"
+    sensorFrame: "laser"
+    filteringFrame: "base_link"
+
+    # === DISTANCE LIMITS ===
+    minDistance: 0.05
+    maxDistance: 100.0
+
+    # === ROBOT MODEL ===
+    body_model:
+      robot_description_param: "robot_description"
+      inflation:
+        scale: 1.1
+        padding: 0.05
+
+    # === FILTER SETTINGS ===
+    filter:
+      keep_clouds_organized: true
+      model_pose_update_interval: 0.01
+      do_clipping: true
+      do_contains_test: true
+      do_shadow_test: true
+      max_shadow_distance: 0.5
+
+    # === TRANSFORM SETTINGS ===
+    transforms:
+      timeout:
+        reachable: 0.1
+        unreachable: 0.2
+      require_all_reachable: false
+      buffer_length: 10.0
+
+    # === SENSOR SETTINGS ===
+    sensor:
+      point_by_point: false
+
+    # === IGNORED LINKS ===
+    ignored_links:
+      bounding_sphere: [""]
+      shadow_test: [""]
+      contains_test: [""]
+
+    # === BOUNDING SHAPES DEBUG ===
+    bounding_sphere:
+      compute: true
+      debug: true
+      marker: true
+      publish_cut_out_pointcloud: true
+
+    bounding_box:
+      compute: true
+      debug: true
+      marker: true
+      publish_cut_out_pointcloud: true
+
+    oriented_bounding_box:
+      compute: false
+      debug: true
+      marker: true
+      publish_cut_out_pointcloud: false
+
+    local_bounding_box:
+      frame_id: "base_link"
+      compute: false
+      debug: false
+      marker: false
+      publish_cut_out_pointcloud: false
+
+    # === DEBUG SETTINGS ===
+    debug:
+      pcl:
+        inside: true
+        clip: true
+        shadow: true
+      marker:
+        contains: true
+        shadow: true
+
+    # === DEBUG & PERFORMANCE SETTINGS ===
+    use_sim_time: false
+    processing_rate: 10.0
+    queue_size: 10

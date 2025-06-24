@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<library path="robot_body_filter_plugins">
+  
+  <!-- Distance Filter Processor Plugin -->
+  <class name="robot_body_filter/DistanceFilterProcessor" 
+         type="robot_body_filter::DistanceFilterProcessor" 
+         base_class_type="robot_body_filter::LidarProcessorBase">
+    <description>
+      A LiDAR processor that filters points based on their distance from the sensor origin.
+      Points closer than min_distance or farther than max_distance are removed.
+      Useful for removing noise near the sensor and limiting the processing range.
+    </description>
+  </class>
+
+  <!-- Voxel Grid Processor Plugin -->
+  <class name="robot_body_filter/VoxelGridProcessor" 
+         type="robot_body_filter::VoxelGridProcessor" 
+         base_class_type="robot_body_filter::LidarProcessorBase">
+    <description>
+      A LiDAR processor that applies voxel grid downsampling to reduce point cloud density.
+      This processor helps to reduce computational load while maintaining the general 
+      structure of the point cloud data. Configurable voxel sizes in X, Y, and Z directions.
+    </description>
+  </class>
+
+  <!-- Robot Body Filter Processor Plugin -->
+  <class name="robot_body_filter/RobotBodyFilterProcessor" 
+         type="robot_body_filter::RobotBodyFilterProcessor" 
+         base_class_type="robot_body_filter::LidarProcessorBase">
+    <description>
+      A LiDAR processor that removes the robot's own body from sensor data.
+      This processor wraps the existing RobotBodyFilter functionality in the plugin interface,
+      allowing it to be used as part of a processing pipeline. Supports both point clouds
+      and laser scans with URDF-based robot model filtering.
+    </description>
+  </class>
+
+</library>

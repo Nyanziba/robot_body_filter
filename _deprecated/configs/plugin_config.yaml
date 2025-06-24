@@ -1,0 +1,80 @@
+/**:
+  ros__parameters:
+    # Distance filter parameters
+    distance_filter:
+      min_distance: 0.1
+      max_distance: 30.0
+      keep_organized: false
+    
+    # Voxel grid parameters  
+    voxel_grid:
+      leaf_size_x: 0.05
+      leaf_size_y: 0.05
+      leaf_size_z: 0.05
+    
+    # Robot body filter parameters
+    fixedFrame: "base_link"
+    sensorFrame: ""
+    filteringFrame: "base_link"
+    minDistance: 0.03
+    maxDistance: 50.0
+    
+    # Body model parameters
+    body_model:
+      robot_description_param: "robot_description"
+      inflation:
+        scale: 1.07
+        padding: 0.01
+    
+    # Filter parameters
+    filter:
+      keep_clouds_organized: true
+      model_pose_update_interval: 0.002
+      do_clipping: true
+      do_contains_test: true
+      do_shadow_test: true
+      max_shadow_distance: 0.3
+    
+    # Transform parameters
+    transforms:
+      timeout:
+        reachable: 0.2
+        unreachable: 0.2
+      require_all_reachable: false
+    
+    # Sensor parameters
+    sensor:
+      point_by_point: false
+    
+    # Bounding shape parameters
+    bounding_sphere:
+      compute: true
+      debug: false
+      marker: false
+      publish_cut_out_pointcloud: false
+    
+    bounding_box:
+      compute: true
+      debug: false
+      marker: false
+      publish_cut_out_pointcloud: false
+    
+    oriented_bounding_box:
+      compute: false
+      debug: false
+      marker: false
+      publish_cut_out_pointcloud: false
+    
+    local_bounding_box:
+      frame_id: "base_link"
+      compute: false
+      debug: false
+      marker: false
+      publish_cut_out_pointcloud: false
+    
+    # Global node parameters
+    use_sim_time: false
+    
+    # Processing configuration
+    processing_rate: 10.0
+    queue_size: 10

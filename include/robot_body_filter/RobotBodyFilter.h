@@ -466,32 +466,28 @@ private:
 class RobotBodyFilterLaserScan : public RobotBodyFilter<sensor_msgs::msg::LaserScan>
 {
 public:
+  RobotBodyFilterLaserScan(std::shared_ptr<rclcpp::Node> node) : RobotBodyFilter<sensor_msgs::msg::LaserScan>(node) {}
+  RobotBodyFilterLaserScan() = default;
   void DeclareParameters();
   //! Apply the filter.
   bool update(const sensor_msgs::msg::LaserScan& inputScan, sensor_msgs::msg::LaserScan& filteredScan) override;
-
   bool configure() override;
-
 protected:
   laser_geometry::LaserProjection laserProjector;
-
-  // in RobotBodyFilterLaserScan::update we project the scan to a pointcloud with viewpoints
   const std::unordered_map<std::string, CloudChannelType> channelsToTransform { {"vp_", CloudChannelType::POINT} };
 };
 
 class RobotBodyFilterPointCloud2 : public RobotBodyFilter<sensor_msgs::msg::PointCloud2>
 {
 public:
+  RobotBodyFilterPointCloud2(std::shared_ptr<rclcpp::Node> node) : RobotBodyFilter<sensor_msgs::msg::PointCloud2>(node) {}
+  RobotBodyFilterPointCloud2() = default;
   void DeclareParameters();
-  //! Apply the filter.
   bool update(const sensor_msgs::msg::PointCloud2& inputCloud, sensor_msgs::msg::PointCloud2& filteredCloud) override;
-
   bool configure() override;
-
 protected:
   /** \brief Frame into which the output data should be transformed. */
   std::string outputFrame;
-
   std::unordered_map<std::string, CloudChannelType> channelsToTransform;
 };
 

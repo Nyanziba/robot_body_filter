@@ -11,7 +11,7 @@ else()
   add_compile_options(-DROBOT_BODY_FILTER_USE_CXX_OPTIONAL=0)
 endif()
 
-set(THIS_PACKAGE_DEPS backward_ros urdf urdf_parser_plugin filters geometric_shapes laser_geometry moveit_core moveit_ros_perception rclcpp sensor_msgs std_srvs pcl_conversions tf2 tf2_ros tf2_eigen tf2_sensor_msgs urdf visualization_msgs GLUT OpenCV)
+set(THIS_PACKAGE_DEPS backward_ros urdf urdf_parser_plugin filters geometric_shapes laser_geometry moveit_core moveit_ros_perception rclcpp sensor_msgs std_srvs pcl_conversions tf2 tf2_ros tf2_eigen tf2_sensor_msgs urdf visualization_msgs pluginlib GLUT OpenCV)
 set(MESSAGE_DEPS geometry_msgs std_msgs)
 
 find_package(ament_cmake REQUIRED)
@@ -29,7 +29,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}_msgs "msg/OrientedBoundingBox.msg" "msg/OrientedBoundingBoxStamped.msg" DEPENDENCIES ${MESSAGE_DEPS} LIBRARY_NAME ${PROJECT_NAME})
 
 include_directories(include include/${PROJECT_NAME} include/${PROJECT_NAME}/utils)
-
+pluginlib_export_plugin_description_file(${PROJECT_NAME} plugins.xml)
 set(UTILS_SRCS
   src/utils/bodies.cpp
   src/utils/cloud.cpp
@@ -66,10 +66,28 @@ target_link_libraries(${PROJECT_NAME}
 )
 ament_target_dependencies(${PROJECT_NAME} ${THIS_PACKAGE_DEPS})
 
+# Plugin library
+set(PLUGIN_SRCS
+  src/processors/distance_filter_processor.cpp
+  src/processors/voxel_grid_processor.cpp
+  src/processors/robot_body_filter_processor.cpp
+  src/plugin_registration.cpp
+)
+add_library(${PROJECT_NAME}_plugins ${PLUGIN_SRCS})
+target_include_directories(${PROJECT_NAME}_plugins PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
+target_link_libraries(${PROJECT_NAME}_plugins
+  ${PROJECT_NAME}
+  ${PROJECT_NAME}_utils
+  ${PCL_LIBRARIES}
+)
+ament_target_dependencies(${PROJECT_NAME}_plugins ${THIS_PACKAGE_DEPS})
+
 install(DIRECTORY include/
    DESTINATION include)
 
-install(TARGETS ${PROJECT_NAME} TFFramesWatchdog RayCastingShapeMask tf2_sensor_msgs_rbf ${PROJECT_NAME}_utils
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugins TFFramesWatchdog RayCastingShapeMask tf2_sensor_msgs_rbf ${PROJECT_NAME}_utils
   EXPORT export_${PROJECT_NAME}
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
@@ -78,6 +96,49 @@ install(TARGETS ${PROJECT_NAME} TFFramesWatchdog RayCastingShapeMask tf2_sensor_
 
 install(FILES rviz/debug.rviz
   DESTINATION share/rviz)
+
+install(FILES plugins.xml
+  DESTINATION share/${PROJECT_NAME})
+
+install(DIRECTORY examples/
+  DESTINATION share/${PROJECT_NAME}/examples)
+
+install(DIRECTORY launch/
+  DESTINATION share/${PROJECT_NAME}/launch)
+
+# Removed deprecated example executables - moved to _deprecated/ folder
+
+# Accurate collision filter
+add_executable(accurate_collision_filter examples/cpp_examples/accurate_collision_filter.cpp)
+target_include_directories(accurate_collision_filter PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
+target_link_libraries(accurate_collision_filter
+  ${PROJECT_NAME}
+  ${PROJECT_NAME}_utils
+  ${PCL_LIBRARIES}
+)
+ament_target_dependencies(accurate_collision_filter ${THIS_PACKAGE_DEPS})
+
+install(TARGETS accurate_collision_filter
+  DESTINATION lib/${PROJECT_NAME})
+
+# Simple point cloud publisher
+add_executable(simple_pointcloud_publisher examples/cpp_examples/simple_pointcloud_publisher.cpp)
+target_include_directories(simple_pointcloud_publisher PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
+target_link_libraries(simple_pointcloud_publisher
+  ${PCL_LIBRARIES}
+)
+ament_target_dependencies(simple_pointcloud_publisher ${THIS_PACKAGE_DEPS})
+
+install(TARGETS simple_pointcloud_publisher
+  DESTINATION lib/${PROJECT_NAME})
+
+# Additional example executables (optional)
+# add_executable(test_plugin_load examples/cpp_examples/test_plugin_load.cpp)
+# add_executable(debug_plugin_load examples/cpp_examples/debug_plugin_load.cpp)
 
 if (BUILD_TESTING) 
   find_package(ament_cmake_gtest REQUIRED)
@@ -140,7 +201,7 @@ endif()
 
 ament_export_include_directories(include include/${PROJECT_NAME} include/${PROJECT_NAME}/utils)
 ament_export_dependencies(${THIS_PACKAGE_DEPS} rosidl_default_runtime)
-ament_export_libraries(${PROJECT_NAME} TFFramesWatchdog RayCastingShapeMask tf2_sensor_msgs_rbf ${PROJECT_NAME}_utils)
+ament_export_libraries(${PROJECT_NAME} ${PROJECT_NAME}_plugins TFFramesWatchdog RayCastingShapeMask tf2_sensor_msgs_rbf ${PROJECT_NAME}_utils)
 ament_export_targets(
   export_${PROJECT_NAME}
 )

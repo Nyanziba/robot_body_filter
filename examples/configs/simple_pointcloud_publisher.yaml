@@ -1,0 +1,16 @@
+/**:
+  ros__parameters:
+    # Output settings
+    output_topic: "/raw_pointcloud"
+    frame_id: "laser"
+    
+    # Publishing settings
+    publish_rate: 10.0  # Hz
+    
+    # Point cloud generation settings
+    num_points: 50000  # Number of points per cloud
+    point_range: 3.0   # Generate points in range [-point_range, +point_range] for each axis
+    
+    # Noise settings
+    add_noise: true       # Add Gaussian noise to points
+    noise_stddev: 0.01    # Standard deviation of noise in meters

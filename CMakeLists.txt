@@ -11,7 +11,7 @@ else()
   add_compile_options(-DROBOT_BODY_FILTER_USE_CXX_OPTIONAL=0)
 endif()
 
-set(THIS_PACKAGE_DEPS backward_ros urdf urdf_parser_plugin filters geometric_shapes laser_geometry moveit_core moveit_ros_perception rclcpp sensor_msgs std_srvs pcl_conversions tf2 tf2_ros tf2_eigen tf2_sensor_msgs urdf visualization_msgs GLUT OpenCV)
+set(THIS_PACKAGE_DEPS backward_ros urdf urdf_parser_plugin filters geometric_shapes laser_geometry moveit_core moveit_ros_perception rclcpp rclcpp_components sensor_msgs std_srvs pcl_conversions tf2 tf2_ros tf2_eigen tf2_sensor_msgs urdf visualization_msgs GLUT OpenCV pluginlib)
 set(MESSAGE_DEPS geometry_msgs std_msgs)
 
 find_package(ament_cmake REQUIRED)
@@ -29,6 +29,8 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}_msgs "msg/OrientedBoundingBox.msg" "msg/OrientedBoundingBoxStamped.msg" DEPENDENCIES ${MESSAGE_DEPS} LIBRARY_NAME ${PROJECT_NAME})
 
 include_directories(include include/${PROJECT_NAME} include/${PROJECT_NAME}/utils)
+
+pluginlib_export_plugin_description_file(filters plugins.xml)
 
 set(UTILS_SRCS
   src/utils/bodies.cpp
@@ -55,6 +57,10 @@ add_library(TFFramesWatchdog src/TFFramesWatchdog.cpp)
 target_link_libraries(TFFramesWatchdog ${PROJECT_NAME}_utils)
 
 add_library(${PROJECT_NAME} src/RobotBodyFilter.cpp)
+add_library(Oedo_component src/oedo.cpp)
+target_link_libraries(Oedo_component ${PROJECT_NAME} ${PROJECT_NAME}_utils)
+rclcpp_components_register_nodes(Oedo_component "Oedo_robot_body_filter::Oedo")
+
 target_include_directories(${PROJECT_NAME} PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 $<INSTALL_INTERFACE:include>)
@@ -65,7 +71,21 @@ target_link_libraries(${PROJECT_NAME}
   RayCastingShapeMask
 )
 ament_target_dependencies(${PROJECT_NAME} ${THIS_PACKAGE_DEPS})
+ament_target_dependencies(Oedo_component ${THIS_PACKAGE_DEPS})
 
+rclcpp_components_register_node(
+    Oedo_component
+    PLUGIN "Oedo_robot_body_filter::Oedo"
+    EXECUTABLE Oedo
+)
+
+ament_export_targets(export_Oedo_component)
+install(TARGETS Oedo_component
+        EXPORT export_Oedo_component
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+)
 install(DIRECTORY include/
    DESTINATION include)
 
@@ -78,6 +98,11 @@ install(TARGETS ${PROJECT_NAME} TFFramesWatchdog RayCastingShapeMask tf2_sensor_
 
 install(FILES rviz/debug.rviz
   DESTINATION share/rviz)
+
+install(FILES plugins.xml
+  DESTINATION share/${PROJECT_NAME})
+
+  
 
 if (BUILD_TESTING) 
   find_package(ament_cmake_gtest REQUIRED)

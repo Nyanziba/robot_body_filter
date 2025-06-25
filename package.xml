@@ -36,6 +36,7 @@
   <depend>urdf_parser_plugin</depend>
   <depend>backward_ros</depend>
   <depend>libopencv-dev</depend>
+  <depend>pluginlib</depend>
   <!-- <depend>fcl</depend> -->
 
   <build_depend>tf2_eigen</build_depend>
@@ -47,5 +48,6 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <filters plugin="${prefix}/plugins.xml"/>
   </export>
 </package>
